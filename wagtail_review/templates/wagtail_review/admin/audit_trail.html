@@ -16,7 +16,7 @@
         {% for review, review_url in reviews %}
             <div class="review">
                 <h3>
-                    {% blocktrans with submitter=review.submitted_by.get_full_name datetime=review.submitted_at|date:"H:i j M Y" %}Review requested by {{ submitter }} at {{ datetime }}{% endblocktrans %} - <strong>{{ review.get_status_display }}</strong>
+                    {% blocktrans with submitter=review.submitted_by.get_full_name datetime=review.submitted_at|date:"H:i j M Y" %}Review lakjsdfrequested by {{ submitter }} at {{ datetime }}{% endblocktrans %} - <strong>{{ review.get_status_display }}</strong>
                 </h3>
                 <table class="listing">
                     <thead>
