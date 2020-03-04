@@ -88,13 +88,19 @@ hooks.register('after_edit_page', handle_submit_for_review)
 
 class ReviewsMenuItem(MenuItem):
     def is_shown(self, request):
+        print("test", len(ReviewRequest.get_number_of_pages_with_reviews_for_user(request.user)))
         return bool(ReviewRequest.get_pages_with_reviews_for_user(request.user))
 
+class ReviewsMenuNumber(MenuItem):
+    def how_many_reviews(self, request):
+        print("YE")
+        return len(ReviewRequest.get_pages_with_reviews_for_user(request.user))
 
 @hooks.register('register_admin_menu_item')
 def register_images_menu_item():
+    #number_of_reviews = how_many_reviews
     return ReviewsMenuItem(
-        _('Reviews'), reverse('wagtail_review_admin:dashboard'),
+        _('Reviews aa'), reverse('wagtail_review_admin:dashboard'),
         name='reviews', classnames='icon icon-tick', order=1000
     )
 

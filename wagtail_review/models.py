@@ -266,6 +266,34 @@ class ReviewRequest(models.Model):
             .annotate(last_review_requested_at=last_review_requested_at)
             .order_by('-last_review_requested_at')
         )
+    
+    @classmethod
+    def get_number_of_pages_with_reviews_for_user(cls, user):
+            """
+            Return a queryset of pages which have reviews, for which the user has edit permission
+            """
+            user_perms = UserPagePermissionsProxy(user)
+            reviewed_pages = (
+                cls.objects
+                .order_by('-submitted_at')
+                .values_list('page_revision__page_id', 'submitted_at')
+            )
+            # Annotate datetime when a review was last created for this page
+            last_review_requested_at = Case(
+                *[
+                    When(pk=pk, then=Value(submitted_at))
+                    for pk, submitted_at in reviewed_pages
+                ],
+                output_field=models.DateTimeField(),
+            )
+            return (
+                user_perms.editable_pages()
+                .filter(pk__in=(page[0] for page in reviewed_pages))
+                .filter(status=ReviewResponse.STATUS_APPROVED)
+                .annotate(last_review_requested_at=last_review_requested_at)
+                .order_by('-last_review_requested_at')
+            )
+
 
     def get_assignees_without_response(self):
         return self.assignees.exclude(
